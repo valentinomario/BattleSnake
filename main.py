@@ -67,9 +67,9 @@ def move(game_state: typing.Dict) -> typing.Dict:
     board_width = game_state['board']['width']
     board_height = game_state['board']['height']
 
-    l_distance = my_head.x
+    l_distance = my_head["x"]
     r_distance = board_width - 1 - l_distance
-    b_distance = my_head.y
+    b_distance = my_head["y"]
     t_distance = board_height - 1 - b_distance
 
     furthest_move = {l_distance: "left",
