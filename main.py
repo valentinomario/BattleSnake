@@ -93,7 +93,7 @@ def move(game_state: typing.Dict) -> typing.Dict:
 
 
 # Start server when `python main.py` is run
-# group 29 version
+# group 4:29 version
 if __name__ == "__main__":
     from server import run_server
 
