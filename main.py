@@ -51,7 +51,7 @@ def end(game_state: typing.Dict):
 # move is called on every turn and returns your next move
 # Valid moves are "up", "down", "left", or "right"
 # See https://docs.battlesnake.com/api/example-move for available data
-def move(game_state: typing.Dict) -> typing.Dict:
+def _move(game_state: typing.Dict) -> typing.Dict:
     # board origin: BL
 
     
@@ -108,7 +108,7 @@ def move(game_state: typing.Dict) -> typing.Dict:
     return {"move": next_move}
 
 
-def _move(game_state: typing.Dict) -> typing.Dict:
+def move(game_state: typing.Dict) -> typing.Dict:
 
     # Create grid for A*
     #    for i in range(game_state["board"]["height"]):
