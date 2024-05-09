@@ -109,7 +109,8 @@ def _move(game_state: typing.Dict) -> typing.Dict:
 
 
 def move(game_state: typing.Dict) -> typing.Dict:
-
+    
+    print(f"MOVE {game_state['turn']}")
     # Create grid for A*
     #    for i in range(game_state["board"]["height"]):
     #        for j in range(game_state["board"]["width"]):
@@ -127,7 +128,7 @@ def move(game_state: typing.Dict) -> typing.Dict:
         x = hazard['x']
         y = hazard['y']
         board[y][x] = 1
-
+    
     board[game_state["you"]["head"]["x"]][game_state["you"]["head"]["y"]] = 0
     board_graph = create_graph(board)
 
@@ -135,9 +136,27 @@ def move(game_state: typing.Dict) -> typing.Dict:
     my_target = game_state["board"]["food"][0]["x"], game_state["board"]["food"][0]["y"]
 
     path = AStarSearch(board_graph).astar(my_head, my_target)
-    print(path)
+    if path is None:
+        return {"move": "down"}
+    path_list = list(path)
+    print(path_list)
+    
+    if len(path_list)>1:
+        return {"move": next_direction(my_head, path_list[1])}
+    return {"move": "down"}
+    
 
 
+def next_direction(head, next_square):
+    if head[0]>next_square[0]:
+        return "left"
+    if head[0]<next_square[0]:
+        return "right"
+    if head[1]>next_square[1]:
+        return "down"
+    if head[1]<next_square[1]:
+        return "up"
+    return "None"
 def create_graph(matrix):
     height = len(matrix)
     width = len(matrix[0])
