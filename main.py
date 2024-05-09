@@ -137,6 +137,7 @@ def move(game_state: typing.Dict) -> typing.Dict:
 
     path = AStarSearch(board_graph).astar(my_head, my_target)
     if path is None:
+        print("Path not found!")
         return {"move": "down"}
     path_list = list(path)
     print(path_list)
