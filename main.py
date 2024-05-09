@@ -114,21 +114,21 @@ def move(game_state: typing.Dict) -> typing.Dict:
     # Create grid for A*
     #    for i in range(game_state["board"]["height"]):
     #        for j in range(game_state["board"]["width"]):
-    height = game_state["board"]["height"]
-    width = game_state["board"]["width"]
+    height = game_state["board"]["height"] # rows
+    width = game_state["board"]["width"]   # columns
     board = [[0 for _ in range(width)] for _ in range(height)]
     
     for snake in game_state["board"]["snakes"]:
         for body_piece in snake["body"]:
             x = body_piece['x']
             y = body_piece['y']
-            board[y][x] = 1
+            board[x][y] = 1
 
     for hazard in game_state["board"]["hazards"]:
         x = hazard['x']
         y = hazard['y']
-        board[y][x] = 1
-    
+        board[x][y] = 1
+
     board[game_state["you"]["head"]["x"]][game_state["you"]["head"]["y"]] = 0
     board_graph = create_graph(board)
 
@@ -141,7 +141,7 @@ def move(game_state: typing.Dict) -> typing.Dict:
         return {"move": "down"}
     path_list = list(path)
     print(path_list)
-    
+
     if len(path_list)>1:
         return {"move": next_direction(my_head, path_list[1])}
     return {"move": "down"}
@@ -158,6 +158,8 @@ def next_direction(head, next_square):
     if head[1]<next_square[1]:
         return "up"
     return "None"
+
+
 def create_graph(matrix):
     height = len(matrix)
     width = len(matrix[0])
@@ -171,20 +173,23 @@ def create_graph(matrix):
 
     for y in range(height):
         for x in range(width):
-            if matrix[y][x] == 0:  # Free cell
-                current_node = (y, x)
+            if matrix[x][y] == 0:  # Free cell
+                current_node = (x, y)
                 # Up
-                if y > 0 and matrix[y - 1][x] == 0:
-                    add_edge(current_node, (y - 1, x), 100)
+                if y < height-1 and matrix[x][y+1] == 0:
+                    add_edge(current_node, (x, y+1), 100)
+
                 # Down
-                if y < height - 1 and matrix[y + 1][x] == 0:
-                    add_edge(current_node, (y + 1, x), 100)
+                if y > 0 and matrix[x][y-1] == 0:
+                    add_edge(current_node, (x, y-1), 100)
+
                 # Left
-                if x > 0 and matrix[y][x - 1] == 0:
-                    add_edge(current_node, (y, x - 1), 100)
+                if x > 0 and matrix[x-1][y] == 0:
+                    add_edge(current_node, (x-1, y), 100)
+
                 # Right
-                if x < width - 1 and matrix[y][x + 1] == 0:
-                    add_edge(current_node, (y, x + 1), 100)
+                if x < width-1 and matrix[x+1][y] == 0:
+                    add_edge(current_node, (x+1, y), 100)
 
     return nodes
 
