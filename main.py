@@ -46,12 +46,7 @@ def end(game_state: typing.Dict):
 def move(game_state: typing.Dict) -> typing.Dict:
     # board origin: BL
 
-    board = []
-    for snake in game_state["board"]["snakes"]:
-        for body_piece in snake["body"]:
-            board[body_piece] = 1
-
-    print(board)
+    
 
     is_move_safe = {"up": True, "down": True, "left": True, "right": True}
 
@@ -109,10 +104,15 @@ def _move(game_state: typing.Dict) -> typing.Dict:
     # Create grid for A*
     #    for i in range(game_state["board"]["height"]):
     #        for j in range(game_state["board"]["width"]):
-    board = []
+    height = game_state["board"]["height"]
+    width = game_state["board"]["width"]
+    board = [[0 for _ in range(width)] for _ in range(height)]
+    
     for snake in game_state["board"]["snakes"]:
         for body_piece in snake["body"]:
-            board[body_piece] = 1
+            x = body_piece['x']
+            y = body_piece['y']
+            board[y][x] = 1
 
 # Start server when `python main.py` is run
 # group 4:29 version
