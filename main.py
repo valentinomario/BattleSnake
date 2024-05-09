@@ -2,6 +2,7 @@ import random
 import typing
 from astar import AStar
 
+
 class AStarSearch(AStar):
     def __init__(self, nodes):
         self.nodes = nodes
@@ -106,6 +107,7 @@ def move(game_state: typing.Dict) -> typing.Dict:
     print(f"MOVE {game_state['turn']}: {next_move}")
     return {"move": next_move}
 
+
 def _move(game_state: typing.Dict) -> typing.Dict:
 
     # Create grid for A*
@@ -150,19 +152,19 @@ def create_graph(matrix):
     for y in range(height):
         for x in range(width):
             if matrix[y][x] == 0:  # Free cell
-                current_node = f"({y},{x})"
+                current_node = (y, x)
                 # Up
                 if y > 0 and matrix[y - 1][x] == 0:
-                    add_edge(current_node, f"({y - 1},{x})", 100)
+                    add_edge(current_node, (y - 1, x), 100)
                 # Down
                 if y < height - 1 and matrix[y + 1][x] == 0:
-                    add_edge(current_node, f"({y + 1},{x})", 100)
+                    add_edge(current_node, (y + 1, x), 100)
                 # Left
                 if x > 0 and matrix[y][x - 1] == 0:
-                    add_edge(current_node, f"({y},{x - 1})", 100)
+                    add_edge(current_node, (y, x - 1), 100)
                 # Right
                 if x < width - 1 and matrix[y][x + 1] == 0:
-                    add_edge(current_node, f"({y},{x + 1})", 100)
+                    add_edge(current_node, (y, x + 1), 100)
 
     return nodes
 
