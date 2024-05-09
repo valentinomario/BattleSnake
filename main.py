@@ -12,6 +12,7 @@
 
 import random
 import typing
+import astar
 
 
 # info is called when you create your Battlesnake on play.battlesnake.com
@@ -44,6 +45,13 @@ def end(game_state: typing.Dict):
 # See https://docs.battlesnake.com/api/example-move for available data
 def move(game_state: typing.Dict) -> typing.Dict:
     # board origin: BL
+
+    board = []
+    for snake in game_state["board"]["snakes"]:
+        for body_piece in snake["body"]:
+            board[body_piece] = 1
+
+    print(board)
 
     is_move_safe = {"up": True, "down": True, "left": True, "right": True}
 
@@ -89,8 +97,6 @@ def move(game_state: typing.Dict) -> typing.Dict:
         print(f"MOVE {game_state['turn']}: No safe moves detected! Moving down")
         return {"move": "down"}
 
-    # Choose a random move from the safe ones
-    # next_move = random.choice(safe_moves)
     next_move = safe_moves.pop()
     if is_move_safe[furthest_move]:
         next_move = furthest_move
@@ -98,6 +104,15 @@ def move(game_state: typing.Dict) -> typing.Dict:
     print(f"MOVE {game_state['turn']}: {next_move}")
     return {"move": next_move}
 
+def _move(game_state: typing.Dict) -> typing.Dict:
+
+    # Create grid for A*
+    #    for i in range(game_state["board"]["height"]):
+    #        for j in range(game_state["board"]["width"]):
+    board = []
+    for snake in game_state["board"]["snakes"]:
+        for body_piece in snake["body"]:
+            board[body_piece] = 1
 
 # Start server when `python main.py` is run
 # group 4:29 version
