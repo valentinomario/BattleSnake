@@ -1,18 +1,25 @@
-# Welcome to
-# __________         __    __  .__                               __
-# \______   \_____ _/  |__/  |_|  |   ____   ______ ____ _____  |  | __ ____
-#  |    |  _/\__  \\   __\   __\  | _/ __ \ /  ___//    \\__  \ |  |/ // __ \
-#  |    |   \ / __ \|  |  |  | |  |_\  ___/ \___ \|   |  \/ __ \|    <\  ___/
-#  |________/(______/__|  |__| |____/\_____>______>___|__(______/__|__\\_____>
-#
-# This file can be a nice home for your Battlesnake logic and helper functions.
-#
-# To get you started we've included code to prevent your Battlesnake from moving backwards.
-# For more info see docs.battlesnake.com
-
 import random
 import typing
-import astar
+from astar import AStar
+
+class AStarSearch(AStar):
+    def __init__(self, nodes):
+        self.nodes = nodes
+
+    def neighbors(self, n):
+        for n1, d in self.nodes[n]:
+            yield n1
+
+    def distance_between(self, n1, n2):
+        for n, d in self.nodes[n1]:
+            if n == n2:
+                return d
+
+    def heuristic_cost_estimate(self, current, goal):
+        return 1
+
+    def is_goal_reached(self, current, goal):
+        return current == goal
 
 
 # info is called when you create your Battlesnake on play.battlesnake.com
@@ -113,6 +120,52 @@ def _move(game_state: typing.Dict) -> typing.Dict:
             x = body_piece['x']
             y = body_piece['y']
             board[y][x] = 1
+
+    for hazard in game_state["board"]["hazards"]:
+        x = hazard['x']
+        y = hazard['y']
+        board[y][x] = 1
+
+    board[game_state["you"]["head"]["x"]][game_state["you"]["head"]["y"]] = 0
+    board_graph = create_graph(board)
+
+    my_head = game_state["you"]["head"]["x"], game_state["you"]["head"]["y"]
+    my_target = game_state["board"]["food"][0]["x"], game_state["board"]["food"][0]["y"]
+
+    path = AStarSearch(board_graph).astar(my_head, my_target)
+    print(path)
+
+
+def create_graph(matrix):
+    height = len(matrix)
+    width = len(matrix[0])
+    nodes = {}
+
+    def add_edge(node1, node2, cost):
+        if node1 in nodes:
+            nodes[node1].append((node2, cost))
+        else:
+            nodes[node1] = [(node2, cost)]
+
+    for y in range(height):
+        for x in range(width):
+            if matrix[y][x] == 0:  # Free cell
+                current_node = f"({y},{x})"
+                # Up
+                if y > 0 and matrix[y - 1][x] == 0:
+                    add_edge(current_node, f"({y - 1},{x})", 100)
+                # Down
+                if y < height - 1 and matrix[y + 1][x] == 0:
+                    add_edge(current_node, f"({y + 1},{x})", 100)
+                # Left
+                if x > 0 and matrix[y][x - 1] == 0:
+                    add_edge(current_node, f"({y},{x - 1})", 100)
+                # Right
+                if x < width - 1 and matrix[y][x + 1] == 0:
+                    add_edge(current_node, f"({y},{x + 1})", 100)
+
+    return nodes
+
 
 # Start server when `python main.py` is run
 # group 4:29 version
