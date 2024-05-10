@@ -168,7 +168,7 @@ def search_closest_safest_food(game_state: typing.Dict):
 
     for food in food_list:
         our_distance = distance_from_head(food)
-        for snake in game_state["board"]["snake"]:
+        for snake in game_state["board"]["snakes"]:
             if snake["id"] != game_state["you"]["id"]:
                 other_distance = manhattan_distance(food, snake["head"])
                 if our_distance < other_distance:
