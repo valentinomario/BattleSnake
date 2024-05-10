@@ -197,7 +197,7 @@ def move(game_state: typing.Dict) -> typing.Dict:
         #return free move
         return {"move": pickedMove}
     path_list = list(path)
-    print(path_list)
+    #print(path_list)
 
     if len(path_list)>1:
         return {"move": next_direction(my_head, path_list[1])}
