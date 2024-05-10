@@ -2,7 +2,6 @@ import random
 import typing
 from astar import AStar
 
-T = typing.TypeVar("T")
 
 class AStarSearch(AStar):
     def __init__(self, nodes):
@@ -129,7 +128,7 @@ def move(game_state: typing.Dict) -> typing.Dict:
     return {"move": "down"}
     
 
-def search_path(game_state: typing.Dict, start, target) -> typing.Union[typing.Iterable[T], None] :
+def search_path(game_state: typing.Dict, start, target) -> typing.Union[typing.Iterable[object], None] :
     # Create grid for A*
     height = game_state["board"]["height"]  # rows
     width = game_state["board"]["width"]  # columns
