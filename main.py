@@ -206,8 +206,8 @@ def move(game_state: typing.Dict) -> typing.Dict:
     return {"move": pickedMove}
     
 
-def search_path(game_state: typing.Dict, start, target) -> typing.Optional[typing.Tuple[
-    typing.Iterable[object], object]]:
+def search_path(game_state: typing.Dict, start, target) -> \
+        (typing.Optional)[typing.Tuple[typing.Iterable[object], object]]:
     # Create grid for A*
     height = game_state["board"]["height"]  # rows
     width = game_state["board"]["width"]  # columns
@@ -238,8 +238,10 @@ def search_path(game_state: typing.Dict, start, target) -> typing.Optional[typin
 
     board[game_state["you"]["head"]["x"]][game_state["you"]["head"]["y"]] = 0
     board_graph = create_graph(board)
-
-    path = AStarSearch(board_graph).astar(start, target)
+    if target is not None:
+        path = AStarSearch(board_graph).astar(start, target)
+    else:
+        path = None
     return path, board
 
 def next_direction(head, next_square):
