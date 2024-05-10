@@ -110,8 +110,8 @@ def _move(game_state: typing.Dict) -> typing.Dict:
 def safeMove(game_state: typing.Dict, board) -> typing.Dict:
     is_move_safe = {"up": True, "down": True, "left": True, "right": True}
 
-    my_head = game_state["you"]["body"][0]  # Coordinates of your head
-    my_neck = game_state["you"]["body"][1]  # Coordinates of your "neck"
+    my_head = game_state["you"]["body"][0]  # Coordinates of my head
+    my_neck = game_state["you"]["body"][1]  # Coordinates of my "neck"
 
     board_width = game_state['board']['width']
     board_height = game_state['board']['height']
@@ -152,21 +152,22 @@ def move(game_state: typing.Dict) -> typing.Dict:
     my_head = game_state["you"]["head"]["x"], game_state["you"]["head"]["y"]
     my_target = game_state["board"]["food"][0]["x"], game_state["board"]["food"][0]["y"]
 
-    path = search_path(game_state, my_head, my_target)
+    path, board = search_path(game_state, my_head, my_target)
 
     if path is None:
         print("Path not found!")
         #return free move
-        return {"move": "down"}
+        return {"move": safeMove(game_state, board)}
     path_list = list(path)
     print(path_list)
 
     if len(path_list)>1:
         return {"move": next_direction(my_head, path_list[1])}
-    return {"move": "down"}
+    return {"move": safeMove(game_state, board)}
     
 
-def search_path(game_state: typing.Dict, start, target) -> typing.Union[typing.Iterable[object], None] :
+def search_path(game_state: typing.Dict, start, target) -> typing.Optional[typing.Tuple[
+    typing.Iterable[object], object]] :
     # Create grid for A*
     height = game_state["board"]["height"]  # rows
     width = game_state["board"]["width"]  # columns
@@ -199,7 +200,7 @@ def search_path(game_state: typing.Dict, start, target) -> typing.Union[typing.I
     board_graph = create_graph(board)
 
     path = AStarSearch(board_graph).astar(start, target)
-    return path
+    return path, board
 
 def next_direction(head, next_square):
     if head[0]>next_square[0]:
