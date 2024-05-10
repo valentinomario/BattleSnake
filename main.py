@@ -180,9 +180,10 @@ def move(game_state: typing.Dict) -> typing.Dict:
     path, board = search_path(game_state, my_head, my_target)
 
     if path is None:
-        print("Path not found!")
+        pickedMove = safeMove(game_state, board)
+        print("Path not found! Picked move: " + pickedMove["move"])
         #return free move
-        return {"move": safeMove(game_state, board)}
+        return {"move": pickedMove}
     path_list = list(path)
     print(path_list)
 
