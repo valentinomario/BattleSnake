@@ -121,16 +121,16 @@ def safeMove(game_state: typing.Dict, board) -> typing.Dict:
     b_distance = my_head["y"]
     t_distance = board_height - 1 - b_distance
 
-    if my_neck["x"] < my_head["x"] or l_distance == 0 or board[my_head["x"]+1][my_head["y"]] != 1:  # Neck is left of head, don't move left
+    if my_neck["x"] < my_head["x"] or l_distance == 0 or board[my_head["x"]-1][my_head["y"]] == 1:  # Neck is left of head, don't move left
         is_move_safe["left"] = False
 
-    elif my_neck["x"] > my_head["x"] or r_distance == 0 or board[my_head["x"]-1][my_head["y"]] != 1:  # Neck is right of head, don't move right
+    elif my_neck["x"] > my_head["x"] or r_distance == 0 or board[my_head["x"]+1][my_head["y"]] == 1:  # Neck is right of head, don't move right
         is_move_safe["right"] = False
 
-    elif my_neck["y"] < my_head["y"] or b_distance == 0 or board[my_head["x"]][my_head["y"]-1] != 1:  # Neck is below head, don't move down
+    elif my_neck["y"] < my_head["y"] or b_distance == 0 or board[my_head["x"]][my_head["y"]-1] == 1:  # Neck is below head, don't move down
         is_move_safe["down"] = False
 
-    elif my_neck["y"] > my_head["y"] or t_distance == 0 or board[my_head["x"]][my_head["y"]+1] != 1:  # Neck is above head, don't move up
+    elif my_neck["y"] > my_head["y"] or t_distance == 0 or board[my_head["x"]][my_head["y"]+1] == 1:  # Neck is above head, don't move up
         is_move_safe["up"] = False
 
     # Are there any safe moves left?
