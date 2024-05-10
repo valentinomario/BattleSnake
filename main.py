@@ -173,8 +173,8 @@ def move(game_state: typing.Dict) -> typing.Dict:
     print(f"MOVE {game_state['turn']}")
 
     my_head = game_state["you"]["head"]["x"], game_state["you"]["head"]["y"]
-    #my_target = game_state["board"]["food"][0]["x"], game_state["board"]["food"][0]["y"]
-    my_target = search_closest_safest_food(game_state)
+    my_target = game_state["board"]["food"][0]["x"], game_state["board"]["food"][0]["y"]
+    #my_target = search_closest_safest_food(game_state)
 
 
     path, board = search_path(game_state, my_head, my_target)
