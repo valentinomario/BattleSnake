@@ -146,11 +146,36 @@ def safeMove(game_state: typing.Dict, board) -> typing.Dict:
     next_move = safe_moves.pop()
 
     return {"move": next_move}
+def search_closest_safest_food(game_state: typing.Dict, head):
+    food_pieces = game_state["board"]["food"]
+    other_snakes = game_state["board"]["snakes"]
+    if food_pieces is None:
+        return None
+        # TODO check if necessary return None and list()
+    food_list = list(food_pieces)
+
+    def manhattan_distance(a, b):
+        return abs(a["x"] - b["x"]) + abs(a["y"] - b["y"])
+
+    def distance_from_head(e):
+        return manhattan_distance(head, e)
+
+    food_list.sort(key=distance_from_head)
+    print(food_list)
+    
+    #for food in food_list:
+
+
+
+
+
 def move(game_state: typing.Dict) -> typing.Dict:
     print(f"MOVE {game_state['turn']}")
 
     my_head = game_state["you"]["head"]["x"], game_state["you"]["head"]["y"]
-    my_target = game_state["board"]["food"][0]["x"], game_state["board"]["food"][0]["y"]
+    #my_target = game_state["board"]["food"][0]["x"], game_state["board"]["food"][0]["y"]
+    my_target = search_closest_safest_food(game_state)
+
 
     path, board = search_path(game_state, my_head, my_target)
 
