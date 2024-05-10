@@ -135,6 +135,18 @@ def search_path(game_state: typing.Dict, start, target) -> typing.Union[typing.I
     board = [[0 for _ in range(width)] for _ in range(height)]
 
     for snake in game_state["board"]["snakes"]:
+        if (snake["id"] != game_state["you"]["id"]):
+        #set head's surrounding to 1
+            xHead = snake["head"]["x"]
+            yHead = snake["head"]["y"]
+            if xHead > 0:
+                board[xHead-1][yHead] = 1
+            if xHead < width - 1:
+                board[xHead+1][yHead] = 1
+            if yHead > 0:
+                board[xHead][yHead-1] = 1
+            if yHead < height - 1:
+                board[xHead][yHead+1] = 1
         for body_piece in snake["body"]:
             x = body_piece['x']
             y = body_piece['y']
