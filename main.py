@@ -107,9 +107,46 @@ def _move(game_state: typing.Dict) -> typing.Dict:
     print(f"MOVE {game_state['turn']}: {next_move}")
     return {"move": next_move}
 
+def safeMove(game_state: typing.Dict, board) -> typing.Dict:
+    is_move_safe = {"up": True, "down": True, "left": True, "right": True}
 
+    my_head = game_state["you"]["body"][0]  # Coordinates of your head
+    my_neck = game_state["you"]["body"][1]  # Coordinates of your "neck"
+
+    board_width = game_state['board']['width']
+    board_height = game_state['board']['height']
+
+    l_distance = my_head["x"]
+    r_distance = board_width - 1 - l_distance
+    b_distance = my_head["y"]
+    t_distance = board_height - 1 - b_distance
+
+    if my_neck["x"] < my_head["x"] or l_distance == 0 or board[my_head["x"]+1][my_head["y"]] != 1:  # Neck is left of head, don't move left
+        is_move_safe["left"] = False
+
+    elif my_neck["x"] > my_head["x"] or r_distance == 0 or board[my_head["x"]-1][my_head["y"]] != 1:  # Neck is right of head, don't move right
+        is_move_safe["right"] = False
+
+    elif my_neck["y"] < my_head["y"] or b_distance == 0 or board[my_head["x"]][my_head["y"]-1] != 1:  # Neck is below head, don't move down
+        is_move_safe["down"] = False
+
+    elif my_neck["y"] > my_head["y"] or t_distance == 0 or board[my_head["x"]][my_head["y"]+1] != 1:  # Neck is above head, don't move up
+        is_move_safe["up"] = False
+
+    # Are there any safe moves left?
+    safe_moves = []
+    for move, isSafe in is_move_safe.items():
+        if isSafe:
+            safe_moves.append(move)
+
+    if len(safe_moves) == 0:
+        print(f"MOVE {game_state['turn']}: No safe moves detected! Moving down")
+        return {"move": "down"}
+
+    next_move = safe_moves.pop()
+
+    return {"move": next_move}
 def move(game_state: typing.Dict) -> typing.Dict:
-    
     print(f"MOVE {game_state['turn']}")
 
     my_head = game_state["you"]["head"]["x"], game_state["you"]["head"]["y"]
@@ -119,6 +156,7 @@ def move(game_state: typing.Dict) -> typing.Dict:
 
     if path is None:
         print("Path not found!")
+        #return free move
         return {"move": "down"}
     path_list = list(path)
     print(path_list)
@@ -173,7 +211,6 @@ def next_direction(head, next_square):
     if head[1]<next_square[1]:
         return "up"
     return "None"
-
 
 def create_graph(matrix):
     height = len(matrix)
