@@ -49,7 +49,7 @@ def end(game_state: typing.Dict):
 
 
 def printly(game_state:typing.Dict, e):
-    print(game_state["you"]["id"] + " " + e)
+    print(game_state["you"]["name"] + " " + e)
 
 
 # move is called on every turn and returns your next move
