@@ -17,7 +17,7 @@ class AStarSearch(AStar):
                 return d
 
     def heuristic_cost_estimate(self, current, goal):
-        return 1
+        return abs(current[0] - goal[0]) + abs(current[1] - goal[1])
 
     def is_goal_reached(self, current, goal):
         return current == goal
