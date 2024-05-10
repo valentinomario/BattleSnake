@@ -2,6 +2,7 @@ import random
 import typing
 from astar import AStar
 
+T = typing.TypeVar("T")
 
 class AStarSearch(AStar):
     def __init__(self, nodes):
@@ -111,13 +112,29 @@ def _move(game_state: typing.Dict) -> typing.Dict:
 def move(game_state: typing.Dict) -> typing.Dict:
     
     print(f"MOVE {game_state['turn']}")
-    # Create grid for A*
-    #    for i in range(game_state["board"]["height"]):
-    #        for j in range(game_state["board"]["width"]):
-    height = game_state["board"]["height"] # rows
-    width = game_state["board"]["width"]   # columns
-    board = [[0 for _ in range(width)] for _ in range(height)]
+
+    my_head = game_state["you"]["head"]["x"], game_state["you"]["head"]["y"]
+    my_target = game_state["board"]["food"][0]["x"], game_state["board"]["food"][0]["y"]
+
+    path = search_path(game_state, my_head, my_target)
+
+    if path is None:
+        print("Path not found!")
+        return {"move": "down"}
+    path_list = list(path)
+    print(path_list)
+
+    if len(path_list)>1:
+        return {"move": next_direction(my_head, path_list[1])}
+    return {"move": "down"}
     
+
+def search_path(game_state: typing.Dict, start, target) -> typing.Union[typing.Iterable[T], None] :
+    # Create grid for A*
+    height = game_state["board"]["height"]  # rows
+    width = game_state["board"]["width"]  # columns
+    board = [[0 for _ in range(width)] for _ in range(height)]
+
     for snake in game_state["board"]["snakes"]:
         for body_piece in snake["body"]:
             x = body_piece['x']
@@ -132,21 +149,8 @@ def move(game_state: typing.Dict) -> typing.Dict:
     board[game_state["you"]["head"]["x"]][game_state["you"]["head"]["y"]] = 0
     board_graph = create_graph(board)
 
-    my_head = game_state["you"]["head"]["x"], game_state["you"]["head"]["y"]
-    my_target = game_state["board"]["food"][0]["x"], game_state["board"]["food"][0]["y"]
-
-    path = AStarSearch(board_graph).astar(my_head, my_target)
-    if path is None:
-        print("Path not found!")
-        return {"move": "down"}
-    path_list = list(path)
-    print(path_list)
-
-    if len(path_list)>1:
-        return {"move": next_direction(my_head, path_list[1])}
-    return {"move": "down"}
-    
-
+    path = AStarSearch(board_graph).astar(start, target)
+    return path
 
 def next_direction(head, next_square):
     if head[0]>next_square[0]:
