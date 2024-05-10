@@ -164,9 +164,19 @@ def search_closest_safest_food(game_state: typing.Dict):
         return manhattan_distance(head, e)
 
     food_list.sort(key=distance_from_head)
-    print(food_list)
-    
-    #for food in food_list:
+    # print(food_list)
+
+    for food in food_list:
+        our_distance = distance_from_head(food)
+        for snake in game_state["board"]["snake"]:
+            if snake["id"] != game_state["you"]["id"]:
+                other_distance = manhattan_distance(food, snake["head"])
+                if our_distance < other_distance:
+                    print("Going towards " + food)
+                    return food
+
+    print("No safe food found!")
+    return None
 
 
 
@@ -176,9 +186,8 @@ def move(game_state: typing.Dict) -> typing.Dict:
     print(f"MOVE {game_state['turn']}")
 
     my_head = game_state["you"]["head"]["x"], game_state["you"]["head"]["y"]
-    my_target = game_state["board"]["food"][0]["x"], game_state["board"]["food"][0]["y"]
-    #my_target = search_closest_safest_food(game_state)
-    search_closest_safest_food(game_state)
+    # my_target = game_state["board"]["food"][0]["x"], game_state["board"]["food"][0]["y"]
+    my_target = search_closest_safest_food(game_state)
 
     path, board = search_path(game_state, my_head, my_target)
 
