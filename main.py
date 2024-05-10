@@ -146,7 +146,8 @@ def safeMove(game_state: typing.Dict, board) -> typing.Dict:
     next_move = safe_moves.pop()
 
     return {"move": next_move}
-def search_closest_safest_food(game_state: typing.Dict, head):
+def search_closest_safest_food(game_state: typing.Dict):
+    head = game_state["you"]["head"]["x"], game_state["you"]["head"]["y"]
     food_pieces = game_state["board"]["food"]
     other_snakes = game_state["board"]["snakes"]
     if food_pieces is None:
@@ -175,7 +176,7 @@ def move(game_state: typing.Dict) -> typing.Dict:
     my_head = game_state["you"]["head"]["x"], game_state["you"]["head"]["y"]
     my_target = game_state["board"]["food"][0]["x"], game_state["board"]["food"][0]["y"]
     #my_target = search_closest_safest_food(game_state)
-
+    search_closest_safest_food(game_state)
 
     path, board = search_path(game_state, my_head, my_target)
 
