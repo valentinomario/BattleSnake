@@ -107,7 +107,7 @@ def _move(game_state: typing.Dict) -> typing.Dict:
     print(f"MOVE {game_state['turn']}: {next_move}")
     return {"move": next_move}
 
-def safeMove(game_state: typing.Dict, board) -> typing.Dict:
+def safeMove(game_state: typing.Dict, board) -> str:
     is_move_safe = {"up": True, "down": True, "left": True, "right": True}
 
     my_head = game_state["you"]["body"][0]  # Coordinates of my head
@@ -141,11 +141,13 @@ def safeMove(game_state: typing.Dict, board) -> typing.Dict:
 
     if len(safe_moves) == 0:
         print(f"MOVE {game_state['turn']}: No safe moves detected! Moving down")
-        return {"move": "down"}
+        return "down"
 
     next_move = safe_moves.pop()
 
-    return {"move": next_move}
+    return next_move
+
+
 def search_closest_safest_food(game_state: typing.Dict):
     head = game_state["you"]["head"]
     food_pieces = game_state["board"]["food"]
@@ -182,7 +184,7 @@ def move(game_state: typing.Dict) -> typing.Dict:
 
     if path is None:
         pickedMove = safeMove(game_state, board)
-        print("Path not found! Picked move: " + pickedMove["move"])
+        print("Path not found! Picked move: " + pickedMove)
         #return free move
         return {"move": pickedMove}
     path_list = list(path)
@@ -190,7 +192,9 @@ def move(game_state: typing.Dict) -> typing.Dict:
 
     if len(path_list)>1:
         return {"move": next_direction(my_head, path_list[1])}
-    return {"move": safeMove(game_state, board)}
+    pickedMove = safeMove(game_state, board)
+    print("Path too short! Picked move: " + pickedMove)
+    return {"move": pickedMove}
     
 
 def search_path(game_state: typing.Dict, start, target) -> typing.Optional[typing.Tuple[
