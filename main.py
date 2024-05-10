@@ -173,7 +173,7 @@ def search_closest_safest_food(game_state: typing.Dict):
                 other_distance = manhattan_distance(food, snake["head"])
                 if our_distance < other_distance:
                     print("Going towards " + str(food))
-                    return food
+                    return food["x"], food["y"]
 
     print("No safe food found!")
     return None
@@ -207,7 +207,7 @@ def move(game_state: typing.Dict) -> typing.Dict:
     
 
 def search_path(game_state: typing.Dict, start, target) -> typing.Optional[typing.Tuple[
-    typing.Iterable[object], object]] :
+    typing.Iterable[object], object]]:
     # Create grid for A*
     height = game_state["board"]["height"]  # rows
     width = game_state["board"]["width"]  # columns
