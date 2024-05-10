@@ -40,12 +40,16 @@ def info() -> typing.Dict:
 
 # start is called when your Battlesnake begins a game
 def start(game_state: typing.Dict):
-    print("GAME START")
+    printly(game_state, "GAME START")
 
 
 # end is called when your Battlesnake finishes a game
 def end(game_state: typing.Dict):
-    print("GAME OVER\n")
+    printly(game_state, "GAME OVER\n")
+
+
+def printly(game_state:typing.Dict, e):
+    print(game_state["you"]["id"] + " " + e)
 
 
 # move is called on every turn and returns your next move
@@ -97,14 +101,14 @@ def _move(game_state: typing.Dict) -> typing.Dict:
             safe_moves.append(move)
 
     if len(safe_moves) == 0:
-        print(f"MOVE {game_state['turn']}: No safe moves detected! Moving down")
+        printly(game_state, f"MOVE {game_state['turn']}: No safe moves detected! Moving down")
         return {"move": "down"}
 
     next_move = safe_moves.pop()
     if is_move_safe[furthest_move]:
         next_move = furthest_move
 
-    print(f"MOVE {game_state['turn']}: {next_move}")
+    printly(game_state, f"MOVE {game_state['turn']}: {next_move}")
     return {"move": next_move}
 
 def safeMove(game_state: typing.Dict, board) -> str:
@@ -140,7 +144,7 @@ def safeMove(game_state: typing.Dict, board) -> str:
             safe_moves.append(move)
 
     if len(safe_moves) == 0:
-        print(f"MOVE {game_state['turn']}: No safe moves detected! Moving down")
+        printly(game_state, f"MOVE {game_state['turn']}: No safe moves detected! Moving down")
         return "down"
 
     next_move = safe_moves.pop()
@@ -164,7 +168,7 @@ def search_closest_safest_food(game_state: typing.Dict):
         return manhattan_distance(head, e)
 
     food_list.sort(key=distance_from_head)
-    # print(food_list)
+    # printly(game_state, food_list)
 
     for food in food_list:
         our_distance = distance_from_head(food)
@@ -172,10 +176,10 @@ def search_closest_safest_food(game_state: typing.Dict):
             if snake["id"] != game_state["you"]["id"]:
                 other_distance = manhattan_distance(food, snake["head"])
                 if our_distance < other_distance:
-                    print("Going towards " + str(food))
+                    printly(game_state, "Going towards " + str(food))
                     return food["x"], food["y"]
 
-    print("No safe food found!")
+    printly(game_state, "No safe food found!")
     return None
 
 
@@ -183,7 +187,7 @@ def search_closest_safest_food(game_state: typing.Dict):
 
 
 def move(game_state: typing.Dict) -> typing.Dict:
-    print(f"MOVE {game_state['turn']}")
+    printly(game_state, f"MOVE {game_state['turn']}")
 
     my_head = game_state["you"]["head"]["x"], game_state["you"]["head"]["y"]
     # my_target = game_state["board"]["food"][0]["x"], game_state["board"]["food"][0]["y"]
@@ -193,7 +197,7 @@ def move(game_state: typing.Dict) -> typing.Dict:
 
     if path is None:
         pickedMove = safeMove(game_state, board)
-        print("Path not found! Picked move: " + pickedMove)
+        printly(game_state, "Path not found! Picked move: " + pickedMove)
         #return free move
         return {"move": pickedMove}
     path_list = list(path)
@@ -202,7 +206,7 @@ def move(game_state: typing.Dict) -> typing.Dict:
     if len(path_list)>1:
         return {"move": next_direction(my_head, path_list[1])}
     pickedMove = safeMove(game_state, board)
-    print("Path too short! Picked move: " + pickedMove)
+    printly(game_state, "Path too short! Picked move: " + pickedMove)
     return {"move": pickedMove}
     
 
