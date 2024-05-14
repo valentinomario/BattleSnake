@@ -253,7 +253,7 @@ def immediate_kill_move(game_state: typing.Dict):
         (game_state["you"]["head"]["x"], game_state["you"]["head"]["y"] - 1): "down"
     }
 
-    del my_possible_moves[(game_state["you"]["neck"]["x"], game_state["you"]["neck"]["y"])]
+    del my_possible_moves[(game_state["you"]["body"][1]["x"], game_state["you"]["body"][1]["y"])]
 
     for snake in game_state["board"]["snakes"]:
         if (snake["name"] != my_name) and (my_length > snake["length"]):
@@ -263,7 +263,7 @@ def immediate_kill_move(game_state: typing.Dict):
                 (snake["head"]["x"] - 1, snake["head"]["y"]),
                 (snake["head"]["x"], snake["head"]["y"] - 1)
             }
-            snake_possible_moves.remove((snake["neck"]["x"], snake["neck"]["y"]))
+            snake_possible_moves.remove((snake["body"][1]["x"], snake["body"][1]["y"]))
 
             for my_move in my_possible_moves:
                 if my_move in snake_possible_moves:
