@@ -131,6 +131,12 @@ def search_closest_safest_food(game_state: typing.Dict):
 def move(game_state: typing.Dict) -> typing.Dict:
     printly(game_state, f"MOVE {game_state['turn']}")
 
+    # check if it is possible to make a kill in one move
+    ikm = immediate_kill_move(game_state)
+    if ikm is not None:
+        printly(game_state, "killing in one move: " + ikm)
+        return {"move": ikm}
+
     my_head = game_state["you"]["head"]["x"], game_state["you"]["head"]["y"]
     # my_target = game_state["board"]["food"][0]["x"], game_state["board"]["food"][0]["y"]
     my_target = search_closest_safest_food(game_state)
@@ -234,6 +240,36 @@ def create_graph(matrix):
                     add_edge(current_node, (x+1, y), 100)
 
     return nodes
+
+
+def immediate_kill_move(game_state: typing.Dict):
+    my_name = game_state["you"]["name"]
+    my_length = game_state["you"]["length"]
+    # find my next possible moves
+    my_possible_moves = {
+        (game_state["you"]["head"]["x"] + 1, game_state["you"]["head"]["y"]): "right",
+        (game_state["you"]["head"]["x"], game_state["you"]["head"]["y"] + 1): "up",
+        (game_state["you"]["head"]["x"] - 1, game_state["you"]["head"]["y"]): "left",
+        (game_state["you"]["head"]["x"], game_state["you"]["head"]["y"] - 1): "down"
+    }
+
+    del my_possible_moves[(game_state["you"]["neck"]["x"], game_state["you"]["neck"]["y"])]
+
+    for snake in game_state["board"]["snakes"]:
+        if (snake["name"] != my_name) and (my_length > snake["length"]):
+            snake_possible_moves = {
+                (snake["head"]["x"] + 1, snake["head"]["y"]),
+                (snake["head"]["x"], snake["head"]["y"] + 1),
+                (snake["head"]["x"] - 1, snake["head"]["y"]),
+                (snake["head"]["x"], snake["head"]["y"] - 1)
+            }
+            snake_possible_moves.remove((snake["neck"]["x"], snake["neck"]["y"]))
+
+            for my_move in my_possible_moves:
+                if my_move in snake_possible_moves:
+                    return my_possible_moves[my_move]
+
+    return None
 
 
 # Start server when `python main.py` is run
