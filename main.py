@@ -55,61 +55,6 @@ def printly(game_state:typing.Dict, e):
 # move is called on every turn and returns your next move
 # Valid moves are "up", "down", "left", or "right"
 # See https://docs.battlesnake.com/api/example-move for available data
-def _move(game_state: typing.Dict) -> typing.Dict:
-    # board origin: BL
-
-    
-
-    is_move_safe = {"up": True, "down": True, "left": True, "right": True}
-
-    # We've included code to prevent your Battlesnake from moving backwards
-    my_head = game_state["you"]["body"][0]  # Coordinates of your head
-    my_neck = game_state["you"]["body"][1]  # Coordinates of your "neck"
-
-    board_width = game_state['board']['width']
-    board_height = game_state['board']['height']
-
-    l_distance = my_head["x"]
-    r_distance = board_width - 1 - l_distance
-    b_distance = my_head["y"]
-    t_distance = board_height - 1 - b_distance
-
-    if my_neck["x"] < my_head["x"] or l_distance == 0:  # Neck is left of head, don't move left
-        is_move_safe["left"] = False
-        l_distance = 0
-
-    elif my_neck["x"] > my_head["x"] or r_distance == 0:  # Neck is right of head, don't move right
-        is_move_safe["right"] = False
-        r_distance = 0
-
-    elif my_neck["y"] < my_head["y"] or b_distance == 0:  # Neck is below head, don't move down
-        is_move_safe["down"] = False
-        b_distance = 0
-    elif my_neck["y"] > my_head["y"] or t_distance == 0:  # Neck is above head, don't move up
-        is_move_safe["up"] = False
-        t_distance = 0
-
-    furthest_move = {l_distance: "left",
-                     r_distance: "right",
-                     b_distance: "down",
-                     t_distance: "up"}.get(max(l_distance, r_distance, b_distance, t_distance))
-
-    # Are there any safe moves left?
-    safe_moves = []
-    for move, isSafe in is_move_safe.items():
-        if isSafe:
-            safe_moves.append(move)
-
-    if len(safe_moves) == 0:
-        printly(game_state, f"MOVE {game_state['turn']}: No safe moves detected! Moving down")
-        return {"move": "down"}
-
-    next_move = safe_moves.pop()
-    if is_move_safe[furthest_move]:
-        next_move = furthest_move
-
-    printly(game_state, f"MOVE {game_state['turn']}: {next_move}")
-    return {"move": next_move}
 
 def safeMove(game_state: typing.Dict, board) -> str:
     is_move_safe = {"up": True, "down": True, "left": True, "right": True}
@@ -181,9 +126,6 @@ def search_closest_safest_food(game_state: typing.Dict):
 
     printly(game_state, "No safe food found!")
     return None
-
-
-
 
 
 def move(game_state: typing.Dict) -> typing.Dict:
