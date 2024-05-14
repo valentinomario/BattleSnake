@@ -235,10 +235,11 @@ def search_path(game_state: typing.Dict, start, target) -> \
             y = body_piece['y']
             board[x][y] = 1
 
-    for hazard in game_state["board"]["hazards"]:
-        x = hazard['x']
-        y = hazard['y']
-        board[x][y] = 1
+    # removed hazards handling because we are only going to compete on standard map
+    # for hazard in game_state["board"]["hazards"]:
+    #    x = hazard['x']
+    #    y = hazard['y']
+    #    board[x][y] = 1
 
     board[game_state["you"]["head"]["x"]][game_state["you"]["head"]["y"]] = 0
     board_graph = create_graph(board)
