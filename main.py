@@ -2,6 +2,8 @@ import random
 import typing
 from astar import AStar
 
+from minimax import miniMax_value
+
 
 class AStarSearch(AStar):
     def __init__(self, nodes):
@@ -56,7 +58,7 @@ def printly(game_state:typing.Dict, e):
 # Valid moves are "up", "down", "left", or "right"
 # See https://docs.battlesnake.com/api/example-move for available data
 
-def safeMove(game_state: typing.Dict, board) -> str:
+def safeMove(game_state: typing.Dict, board) -> list[str]:
     is_move_safe = {"up": True, "down": True, "left": True, "right": True}
 
     my_head = game_state["you"]["body"][0]  # Coordinates of my head
@@ -88,13 +90,7 @@ def safeMove(game_state: typing.Dict, board) -> str:
         if isSafe:
             safe_moves.append(move)
 
-    if len(safe_moves) == 0:
-        printly(game_state, f"MOVE {game_state['turn']}: No safe moves detected! Moving down")
-        return "down"
-
-    next_move = safe_moves.pop()
-
-    return next_move
+    return safe_moves
 
 
 def search_closest_safest_food(game_state: typing.Dict):
@@ -127,39 +123,12 @@ def search_closest_safest_food(game_state: typing.Dict):
     printly(game_state, "No safe food found!")
     return None
 
-
-def move(game_state: typing.Dict) -> typing.Dict:
-    printly(game_state, f"MOVE {game_state['turn']}")
-
-    # check if it is possible to make a kill in one move
-    ikm = immediate_kill_move(game_state)
-    if ikm is not None:
-        printly(game_state, "killing in one move: " + ikm)
-        return {"move": ikm}
-
-    my_head = game_state["you"]["head"]["x"], game_state["you"]["head"]["y"]
-    # my_target = game_state["board"]["food"][0]["x"], game_state["board"]["food"][0]["y"]
-    my_target = search_closest_safest_food(game_state)
-
-    path, board = search_path(game_state, my_head, my_target)
-
-    if path is None:
-        pickedMove = safeMove(game_state, board)
-        printly(game_state, "Path not found! Picked move: " + pickedMove)
-        #return free move
-        return {"move": pickedMove}
-    path_list = list(path)
-    #print(path_list)
-
-    if len(path_list)>1:
-        return {"move": next_direction(my_head, path_list[1])}
-    pickedMove = safeMove(game_state, board)
-    printly(game_state, "Path too short! Picked move: " + pickedMove)
-    return {"move": pickedMove}
-    
-
-def search_path(game_state: typing.Dict, start, target) -> \
-        (typing.Optional)[typing.Tuple[typing.Iterable[object], object]]:
+def move (game_state: typing.Dict) -> typing.Dict:
+    processedBoard = defineBoard(game_state)
+    safe_moves = safeMove(game_state, processedBoard)
+    selected_move = miniMax_value(game_state, safe_moves)
+    return {"move": selected_move}
+def defineBoard(game_state: typing.Dict):
     # Create grid for A*
     height = game_state["board"]["height"]  # rows
     width = game_state["board"]["width"]  # columns
@@ -190,13 +159,7 @@ def search_path(game_state: typing.Dict, start, target) -> \
     #    board[x][y] = 1
 
     board[game_state["you"]["head"]["x"]][game_state["you"]["head"]["y"]] = 0
-    board_graph = create_graph(board)
-    if target is not None:
-        path = AStarSearch(board_graph).astar(start, target)
-    else:
-        path = None
-    return path, board
-
+    return  board
 def next_direction(head, next_square):
     if head[0]>next_square[0]:
         return "left"
