@@ -124,7 +124,7 @@ def search_closest_safest_food(game_state: typing.Dict):
     return None
 
 def move (game_state: typing.Dict) -> typing.Dict:
-    printly(game_state, "Move: " + game_state["turn"])
+    printly(game_state, "Move: " + str(game_state["turn"]))
     processedBoard = defineBoard(game_state)
     safe_moves = safeMove(game_state, processedBoard)
     selected_move = miniMax_value(game_state, safe_moves)
