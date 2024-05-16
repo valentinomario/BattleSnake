@@ -1,5 +1,5 @@
-import random
 import typing
+import time
 from astar import AStar
 
 from minimax import miniMax_value
@@ -125,9 +125,10 @@ def search_closest_safest_food(game_state: typing.Dict):
 
 def move (game_state: typing.Dict) -> typing.Dict:
     printly(game_state, "Move: " + str(game_state["turn"]))
+    current_time_ms = int(time.time() * 1000)
     processedBoard = defineBoard(game_state)
     safe_moves = safeMove(game_state, processedBoard)
-    selected_move = miniMax_value(game_state, safe_moves)
+    selected_move = miniMax_value(game_state, safe_moves, current_time_ms)
     return {"move": selected_move}
 
 

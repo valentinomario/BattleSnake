@@ -1,5 +1,10 @@
 import copy
+import time
 from collections import deque
+
+stop_time_ms = 0
+current_iteration = 0
+
 
 # Generates a copy of current game board and another board that tracks snake head positions
 def createBoardState(game_state):
@@ -775,9 +780,10 @@ def evaluatePoint(game_state, depth, main_snake_id, curr_snake_id, current_turn)
 # The snake MiniMax algorithm
 def miniMax(game_state, depth, curr_snake_id, main_snake_id, previous_snake_id, return_move, alpha, beta, current_turn):
     # If given game_state reached an end or depth has reached zero, return game_state score
-    if (depth == 0 or isGameOver(game_state, previous_snake_id)):
+    if depth == 0 or time.time()*1000 >= stop_time_ms or isGameOver(game_state, previous_snake_id):
         return evaluatePoint(game_state, depth, main_snake_id, previous_snake_id, current_turn)
 
+    current_iteration += 1
     # get the id of the next snake that we're gonna minimax
     curr_index = 0
     for index, snake in enumerate(game_state["snakes"]):
@@ -834,14 +840,20 @@ def miniMax(game_state, depth, curr_snake_id, main_snake_id, previous_snake_id, 
 
 
 # Main function
-def miniMax_value(game_state, safe_moves):
+def miniMax_value(game_state, safe_moves, current_time_ms):
     current_game_state = createGameState(game_state, game_state["you"]["id"])
     current_turn = game_state["turn"]
 
-    depth = 5
+    global stop_time_ms
+    stop_time_ms = current_time_ms + 500 - game_state["latency"]
+
+    global current_iteration
+    current_iteration = 0
+    max_depth = 5
     result_value, best_move = miniMax(
-        current_game_state, depth, game_state["you"]["id"], game_state["you"]["id"], None, True, float("-inf"), float("inf"), current_turn)
+        current_game_state, max_depth, game_state["you"]["id"], game_state["you"]["id"], None, True, float("-inf"), float("inf"), current_turn)
     print(f"Minimax value: {result_value}, Best move: {best_move}")
+    print("Minimax value: " + result_value + ", Best move:" + best_move + "iter: " + current_iteration)
 
     if (best_move is not None):
         if (best_move in safe_moves):
