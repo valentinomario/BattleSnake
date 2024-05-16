@@ -851,7 +851,7 @@ def miniMax_value(game_state, safe_moves, current_time_ms):
 
     global stop_time_ms
     if game_state["you"]["latency"] != '':
-        stop_time_ms = current_time_ms + 500 - float(game_state["you"]["latency"])
+        stop_time_ms = current_time_ms + 450 - float(game_state["you"]["latency"])
     else:
         stop_time_ms = current_time_ms + 100
 
@@ -868,7 +868,7 @@ def miniMax_value(game_state, safe_moves, current_time_ms):
         return best_move
     else:
         print("No good move found!")
-        return safe_moves.pop()
+        return None
 
 def createGrid(state):
     for row in state:

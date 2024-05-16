@@ -125,12 +125,93 @@ def search_closest_safest_food(game_state: typing.Dict):
 
 def move (game_state: typing.Dict) -> typing.Dict:
     printly(game_state, "Move: " + str(game_state["turn"]))
-    current_time_ms = int(time.time() * 1000)
-    processedBoard = defineBoard(game_state)
-    safe_moves = safeMove(game_state, processedBoard)
-    selected_move = miniMax_value(game_state, safe_moves, current_time_ms)
-    return {"move": selected_move}
+    try:
+        current_time_ms = int(time.time() * 1000)
+        processedBoard = defineBoard(game_state)
+        safe_moves = safeMove(game_state, processedBoard)
+        selected_move = miniMax_value(game_state, safe_moves, current_time_ms)
+        if selected_move is None:
+            raise
+        return {"move": selected_move}
+    except Exception as err:
+        print("Minimax failed: " + str(err))
+        # check if it is possible to make a kill in one move
+        ikm = immediate_kill_move(game_state)
+        if ikm is not None:
+            printly(game_state, "killing in one move: " + ikm)
+            return {"move": ikm}
 
+        my_head = game_state["you"]["head"]["x"], game_state["you"]["head"]["y"]
+        # my_target = game_state["board"]["food"][0]["x"], game_state["board"]["food"][0]["y"]
+        my_target = search_closest_safest_food(game_state)
+
+        path, board = search_path(game_state, my_head, my_target)
+
+        if path is None:
+            pickedMove = safeMove(game_state, board)
+            printly(game_state, "Path not found! Picked move: " + pickedMove)
+            # return free move
+            return {"move": pickedMove}
+        path_list = list(path)
+        # print(path_list)
+
+        if len(path_list) > 1:
+            return {"move": next_direction(my_head, path_list[1])}
+        pickedMove = safeMove(game_state, board)
+        printly(game_state, "Path too short! Picked move: " + pickedMove[0])
+        return {"move": pickedMove}
+
+
+def search_path(game_state: typing.Dict, start, target) -> \
+        (typing.Optional)[typing.Tuple[typing.Iterable[object], object]]:
+    # Create grid for A*
+    height = game_state["board"]["height"]  # rows
+    width = game_state["board"]["width"]  # columns
+    board = [[0 for _ in range(width)] for _ in range(height)]
+
+    for snake in game_state["board"]["snakes"]:
+        if (snake["id"] != game_state["you"]["id"]):
+        #set head's surrounding to 1
+            xHead = snake["head"]["x"]
+            yHead = snake["head"]["y"]
+            if xHead > 0:
+                board[xHead-1][yHead] = 1
+            if xHead < width - 1:
+                board[xHead+1][yHead] = 1
+            if yHead > 0:
+                board[xHead][yHead-1] = 1
+            if yHead < height - 1:
+                board[xHead][yHead+1] = 1
+        for body_piece in snake["body"]:
+            x = body_piece['x']
+            y = body_piece['y']
+            board[x][y] = 1
+
+    # removed hazards handling because we are only going to compete on standard map
+    # for hazard in game_state["board"]["hazards"]:
+    #    x = hazard['x']
+    #    y = hazard['y']
+    #    board[x][y] = 1
+
+    board[game_state["you"]["head"]["x"]][game_state["you"]["head"]["y"]] = 0
+    board_graph = create_graph(board)
+    if target is not None:
+        path = AStarSearch(board_graph).astar(start, target)
+    else:
+        path = None
+    return path, board
+
+
+def search_path(game_state: typing.Dict, start, target) -> \
+        (typing.Optional)[typing.Tuple[typing.Iterable[object], object]]:
+    # Create grid for A*
+    board = defineBoard(game_state, True)
+    board_graph = create_graph(board)
+    if target is not None:
+        path = AStarSearch(board_graph).astar(start, target)
+    else:
+        path = None
+    return path, board
 
 def defineBoard(game_state: typing.Dict, extra_safe=False):
     # Create grid for A*
@@ -163,7 +244,9 @@ def defineBoard(game_state: typing.Dict, extra_safe=False):
     #    board[x][y] = 1
 
     board[game_state["you"]["head"]["x"]][game_state["you"]["head"]["y"]] = 0
-    return  board
+    return board
+
+
 def next_direction(head, next_square):
     if head[0]>next_square[0]:
         return "left"
