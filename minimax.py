@@ -828,8 +828,9 @@ def miniMax(game_state, depth, curr_snake_id, curr_snake_name,
         best_move = None
         for move in moves:
             new_game_state = makeMove(game_state, curr_snake_id, move)
-            curr_val = miniMax(new_game_state, depth - 1, next_snake_id,
-                               main_snake_id, curr_snake_id, False, alpha, beta, current_turn)
+            curr_val = miniMax(new_game_state, depth - 1, next_snake_id, next_snake_name,
+                               main_snake_id, main_snake_name, curr_snake_id,
+                               False, alpha, beta, current_turn + 1)
             # print(f"{curr_snake_id} {move}: {curr_val}")
             if (min_value > curr_val):
                 best_move = move
@@ -858,11 +859,12 @@ def miniMax_value(game_state, safe_moves, current_time_ms):
     current_depth = 0
     max_depth = 10
     result_value, best_move = miniMax(
-        current_game_state, max_depth, game_state["you"]["id"], game_state["you"]["id"], None, True, float("-inf"), float("inf"), current_turn)
-           
+        current_game_state, max_depth, game_state["you"]["id"], game_state["you"]["name"],
+        game_state["you"]["id"], game_state["you"]["name"],None, True,
+        float("-inf"), float("inf"), current_turn)
 
-    if (best_move is not None):
-        print("Minimax value: " + str(result_value) + ", Best move:" +     best_move + " depth: " + str(current_depth))
+    if best_move is not None:
+        print("Minimax value: " + str(result_value) + ", Best move:" + best_move + " depth: " + str(current_depth))
         return best_move
     else:
         print("No good move found!")
