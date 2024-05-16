@@ -131,15 +131,15 @@ def move (game_state: typing.Dict) -> typing.Dict:
     return {"move": selected_move}
 
 
-def defineBoard(game_state: typing.Dict):
+def defineBoard(game_state: typing.Dict, extra_safe=False):
     # Create grid for A*
     height = game_state["board"]["height"]  # rows
     width = game_state["board"]["width"]  # columns
     board = [[0 for _ in range(width)] for _ in range(height)]
 
     for snake in game_state["board"]["snakes"]:
-        if (snake["id"] != game_state["you"]["id"]):
-        #set head's surrounding to 1
+        if extra_safe and snake["id"] != game_state["you"]["id"]:
+            # set head's surrounding to 1
             xHead = snake["head"]["x"]
             yHead = snake["head"]["y"]
             if xHead > 0:
@@ -244,3 +244,4 @@ if __name__ == "__main__":
     from server import run_server
 
     run_server({"info": info, "start": start, "move": move, "end": end})
+
