@@ -53,7 +53,6 @@ def snakeState(game_state):
     snake_state = []
     for snake in snakes:
         snake_id = snake["id"]
-        snake_name = snake["name"]
         health = snake["health"]
         snake_head = {"x": snake["head"]["x"],
                       "y": board_height - 1 - snake["head"]["y"]}
@@ -67,8 +66,7 @@ def snakeState(game_state):
             "id": snake_id,
             "head": snake_head,
             "body": snake_body,
-            "health": health,
-            "name": snake_name
+            "health": health
         })
 
     return snake_state
@@ -701,7 +699,6 @@ def evaluatePoint(game_state, depth, main_snake_id, curr_snake_id, current_turn)
     curr_snake_head, curr_snake_body, curr_snake_tail, curr_snake_size, curr_snake_health, biggest_size, other_edge_snakes = snakeInfoLoop(
         game_state, curr_snake_id, board_width, board_height)
 
-
     # Lowers score if snake's health is getting too low
     if (curr_snake_health < 20):
         curr_weight += danger_health_penalty
@@ -710,7 +707,6 @@ def evaluatePoint(game_state, depth, main_snake_id, curr_snake_id, current_turn)
 
     if (len(game_state["snakes"]) > 2):
         center_control_weight = 0
-
 
     # Add weight the bigger the snake is, currently + 15 for each growth
     curr_weight += curr_snake_size * snake_size_weight
@@ -776,8 +772,8 @@ def evaluatePoint(game_state, depth, main_snake_id, curr_snake_id, current_turn)
 
 
 # The snake MiniMax algorithm
-def miniMax(game_state, depth, curr_snake_id, curr_snake_name,
-            main_snake_id, main_snake_name, previous_snake_id,
+def miniMax(game_state, depth, curr_snake_id,
+            main_snake_id, previous_snake_id,
             return_move, alpha, beta, current_turn):
 
     global current_depth
@@ -798,17 +794,16 @@ def miniMax(game_state, depth, curr_snake_id, curr_snake_name,
 
     # Select the next snake id inside the snake array
     next_snake_id = game_state["snakes"][(curr_index + 1) % len(game_state["snakes"])]["id"]
-    next_snake_name = game_state["snakes"][(curr_index + 1) % len(game_state["snakes"])]["name"]
     moves = ["up", "down", "right", "left"]
 
-    if curr_snake_name == main_snake_name:
+    if curr_snake_id == main_snake_id:
         highest_value = float("-inf")
         best_move = None
         for move in moves:
             # Makes a copy of the current game state with the current snake taking a possible move
             new_game_state = makeMove(game_state, curr_snake_id, move)
-            curr_val = miniMax(new_game_state, depth - 1, next_snake_id, next_snake_name,
-                               main_snake_id, main_snake_name, curr_snake_id,
+            curr_val = miniMax(new_game_state, depth - 1, next_snake_id,
+                               main_snake_id, curr_snake_id,
                                False, alpha, beta, current_turn + 1)
             if curr_val > highest_value:
                 best_move = move
@@ -828,8 +823,8 @@ def miniMax(game_state, depth, curr_snake_id, curr_snake_name,
         best_move = None
         for move in moves:
             new_game_state = makeMove(game_state, curr_snake_id, move)
-            curr_val = miniMax(new_game_state, depth - 1, next_snake_id, next_snake_name,
-                               main_snake_id, main_snake_name, curr_snake_id,
+            curr_val = miniMax(new_game_state, depth - 1, next_snake_id,
+                               main_snake_id, curr_snake_id,
                                False, alpha, beta, current_turn + 1)
             # print(f"{curr_snake_id} {move}: {curr_val}")
             if (min_value > curr_val):
@@ -859,8 +854,8 @@ def miniMax_value(game_state, safe_moves, current_time_ms):
     current_depth = 0
     max_depth = 10
     result_value, best_move = miniMax(
-        current_game_state, max_depth, game_state["you"]["id"], game_state["you"]["name"],
-        game_state["you"]["id"], game_state["you"]["name"],None, True,
+        current_game_state, max_depth, game_state["you"]["id"],
+        game_state["you"]["id"],None, True,
         float("-inf"), float("inf"), current_turn)
 
     if best_move is not None:

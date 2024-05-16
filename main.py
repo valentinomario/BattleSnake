@@ -123,7 +123,8 @@ def search_closest_safest_food(game_state: typing.Dict):
     printly(game_state, "No safe food found!")
     return None
 
-def move (game_state: typing.Dict) -> typing.Dict:
+
+def move(game_state: typing.Dict) -> typing.Dict:
     printly(game_state, "Move: " + str(game_state["turn"]))
     try:
         current_time_ms = int(time.time() * 1000)
