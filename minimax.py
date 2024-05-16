@@ -2,10 +2,6 @@ import copy
 import time
 from collections import deque
 
-stop_time_ms = 0
-current_iteration = 0
-
-
 # Generates a copy of current game board and another board that tracks snake head positions
 def createBoardState(game_state):
     board_width = game_state["board"]["width"]
@@ -779,6 +775,8 @@ def evaluatePoint(game_state, depth, main_snake_id, curr_snake_id, current_turn)
 
 # The snake MiniMax algorithm
 def miniMax(game_state, depth, curr_snake_id, main_snake_id, previous_snake_id, return_move, alpha, beta, current_turn):
+    global current_iteration
+    global stop_time_ms
     # If given game_state reached an end or depth has reached zero, return game_state score
     if depth == 0 or time.time()*1000 >= stop_time_ms or isGameOver(game_state, previous_snake_id):
         return evaluatePoint(game_state, depth, main_snake_id, previous_snake_id, current_turn)
@@ -853,7 +851,7 @@ def miniMax_value(game_state, safe_moves, current_time_ms):
     result_value, best_move = miniMax(
         current_game_state, max_depth, game_state["you"]["id"], game_state["you"]["id"], None, True, float("-inf"), float("inf"), current_turn)
     print(f"Minimax value: {result_value}, Best move: {best_move}")
-    print("Minimax value: " + result_value + ", Best move:" + best_move + "iter: " + current_iteration)
+    print("Minimax value: " + str(result_value) + ", Best move:" + best_move + "iter: " + str(current_iteration))
 
     if (best_move is not None):
         if (best_move in safe_moves):
