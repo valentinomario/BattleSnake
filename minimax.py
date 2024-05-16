@@ -852,19 +852,21 @@ def miniMax_value(game_state, safe_moves, current_time_ms):
     if game_state["you"]["latency"] != '':
         stop_time_ms = current_time_ms + 500 - float(game_state["you"]["latency"])
     else:
-        stop_time_ms = current_time_ms + 500 - 200
+        stop_time_ms = current_time_ms + 100
 
     global current_depth
     current_depth = 0
     max_depth = 10
     result_value, best_move = miniMax(
         current_game_state, max_depth, game_state["you"]["id"], game_state["you"]["id"], None, True, float("-inf"), float("inf"), current_turn)
-    print("Minimax value: " + str(result_value) + ", Best move:" + best_move + " depth: " + str(current_depth))
+           
 
     if (best_move is not None):
-        if (best_move in safe_moves):
-            return best_move
-    return None
+        print("Minimax value: " + str(result_value) + ", Best move:" +     best_move + " depth: " + str(current_depth))
+        return best_move
+    else:
+        print("No good move found!")
+        return safe_moves.pop()
 
 def createGrid(state):
     for row in state:
