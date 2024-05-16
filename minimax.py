@@ -844,11 +844,14 @@ def miniMax_value(game_state, safe_moves, current_time_ms):
     current_turn = game_state["turn"]
 
     global stop_time_ms
-    stop_time_ms = current_time_ms + 500 - int(game_state["you"]["latency"])
+    if game_state["you"]["latency"] != '':
+        stop_time_ms = current_time_ms + 500 - float(game_state["you"]["latency"])
+    else:
+        stop_time_ms = current_time_ms + 500 - 200
 
     global current_depth
     current_depth = 0
-    max_depth = 5
+    max_depth = 10
     result_value, best_move = miniMax(
         current_game_state, max_depth, game_state["you"]["id"], game_state["you"]["id"], None, True, float("-inf"), float("inf"), current_turn)
     print(f"Minimax value: {result_value}, Best move: {best_move}")
