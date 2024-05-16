@@ -132,10 +132,10 @@ def move(game_state: typing.Dict) -> typing.Dict:
         safe_moves = safeMove(game_state, processedBoard)
         selected_move = miniMax_value(game_state, safe_moves, current_time_ms)
         if selected_move is None:
-            raise
+            raise Exception("Minimax failed!")
         return {"move": selected_move}
     except Exception as err:
-        print("Minimax failed: " + str(err))
+        print(err)
         # check if it is possible to make a kill in one move
         ikm = immediate_kill_move(game_state)
         if ikm is not None:
@@ -150,14 +150,16 @@ def move(game_state: typing.Dict) -> typing.Dict:
 
         if path is None:
             pickedMove = safeMove(game_state, board)
-            printly(game_state, "Path not found! Picked move: " + pickedMove)
+            printly(game_state, "Path not found! Picked move: " + pickedMove[0])
             # return free move
-            return {"move": pickedMove}
+            return {"move": pickedMove[0]}
         path_list = list(path)
         # print(path_list)
 
         if len(path_list) > 1:
-            return {"move": next_direction(my_head, path_list[1])}
+            next_move = next_direction(my_head, path_list[1])
+            printly(game_state, "moving " + next_move)
+            return {"move": next_move}
         pickedMove = safeMove(game_state, board)
         printly(game_state, "Path too short! Picked move: " + pickedMove[0])
         return {"move": pickedMove}
@@ -293,7 +295,7 @@ def create_graph(matrix):
     return nodes
 
 
-def immediate_kill_move(game_state: typing.Dict):
+def immediate_kill_move(game_state: typing.Dict) -> str:
     my_name = game_state["you"]["name"]
     my_length = game_state["you"]["length"]
     # find my next possible moves
