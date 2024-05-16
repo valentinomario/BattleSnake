@@ -852,7 +852,7 @@ def miniMax_value(game_state, safe_moves, current_time_ms):
 
     global current_depth
     current_depth = 0
-    max_depth = 10
+    max_depth = 5
     result_value, best_move = miniMax(
         current_game_state, max_depth, game_state["you"]["id"],
         game_state["you"]["id"],None, True,
