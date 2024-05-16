@@ -53,6 +53,7 @@ def snakeState(game_state):
     snake_state = []
     for snake in snakes:
         snake_id = snake["id"]
+        snake_name = snake["name"]
         health = snake["health"]
         snake_head = {"x": snake["head"]["x"],
                       "y": board_height - 1 - snake["head"]["y"]}
@@ -66,7 +67,8 @@ def snakeState(game_state):
             "id": snake_id,
             "head": snake_head,
             "body": snake_body,
-            "health": health
+            "health": health,
+            "name": snake_name
         })
 
     return snake_state
@@ -774,9 +776,13 @@ def evaluatePoint(game_state, depth, main_snake_id, curr_snake_id, current_turn)
 
 
 # The snake MiniMax algorithm
-def miniMax(game_state, depth, curr_snake_id, main_snake_id, previous_snake_id, return_move, alpha, beta, current_turn):
+def miniMax(game_state, depth, curr_snake_id, curr_snake_name,
+            main_snake_id, main_snake_name, previous_snake_id,
+            return_move, alpha, beta, current_turn):
+
     global current_depth
     global stop_time_ms
+
     # If given game_state reached an end or depth has reached zero, return game_state score
     if depth == 0 or time.time()*1000 >= stop_time_ms or isGameOver(game_state, previous_snake_id):
         return evaluatePoint(game_state, depth, main_snake_id, previous_snake_id, current_turn)
@@ -786,32 +792,31 @@ def miniMax(game_state, depth, curr_snake_id, main_snake_id, previous_snake_id, 
     # get the id of the next snake that we're gonna minimax
     curr_index = 0
     for index, snake in enumerate(game_state["snakes"]):
-        if (snake["id"] == curr_snake_id):
+        if snake["id"] == curr_snake_id:
             curr_index = index
             break
 
     # Select the next snake id inside the snake array
-    next_snake_id = game_state["snakes"][(
-                                                 curr_index + 1) % len(game_state["snakes"])]["id"]
-
+    next_snake_id = game_state["snakes"][(curr_index + 1) % len(game_state["snakes"])]["id"]
+    next_snake_name = game_state["snakes"][(curr_index + 1) % len(game_state["snakes"])]["name"]
     moves = ["up", "down", "right", "left"]
 
-    if (curr_snake_id == main_snake_id):
+    if curr_snake_name == main_snake_name:
         highest_value = float("-inf")
         best_move = None
         for move in moves:
             # Makes a copy of the current game state with the current snake taking a possible move
             new_game_state = makeMove(game_state, curr_snake_id, move)
-            curr_val = miniMax(new_game_state, depth - 1, next_snake_id,
-                               main_snake_id, curr_snake_id, False, alpha, beta, current_turn + 1)
-            # print(f"{curr_snake_id} {move}: {curr_val}")
-            if (curr_val > highest_value):
+            curr_val = miniMax(new_game_state, depth - 1, next_snake_id, next_snake_name,
+                               main_snake_id, main_snake_name, curr_snake_id,
+                               False, alpha, beta, current_turn + 1)
+            if curr_val > highest_value:
                 best_move = move
                 highest_value = curr_val
 
             alpha = max(alpha, curr_val)
 
-            if (alpha >= beta):
+            if alpha >= beta:
                 break
 
         # print(f"highest :   {curr_snake_id} {best_move}: {highest_value}")
