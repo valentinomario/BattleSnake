@@ -845,7 +845,7 @@ def miniMax_value(game_state, safe_moves, current_time_ms):
     current_turn = game_state["turn"]
 
     global stop_time_ms
-    stop_time_ms = current_time_ms + 500 - game_state["latency"]
+    stop_time_ms = current_time_ms + 500 - int(game_state["you"]["latency"])
 
     global current_iteration
     current_iteration = 0
