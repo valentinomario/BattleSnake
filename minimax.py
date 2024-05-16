@@ -854,7 +854,6 @@ def miniMax_value(game_state, safe_moves, current_time_ms):
     max_depth = 10
     result_value, best_move = miniMax(
         current_game_state, max_depth, game_state["you"]["id"], game_state["you"]["id"], None, True, float("-inf"), float("inf"), current_turn)
-    print(f"Minimax value: {result_value}, Best move: {best_move}")
     print("Minimax value: " + str(result_value) + ", Best move:" + best_move + " depth: " + str(current_depth))
 
     if (best_move is not None):
