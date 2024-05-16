@@ -42,7 +42,24 @@ def is_snake_present(game_state, snake_id):
 
 
 def make_move(game_state, snake_id, move):
-   return
+    board_width = len(game_state["board"]["state_board"][0])
+    board_height = len(game_state["board"]["state_board"])
+
+    new_game_state = copy.deepcopy(game_state)
+
+    snake_index = is_snake_present(game_state, snake_id)
+    if snake_index is None:
+        return None
+
+    snake_head = (game_state["board"]["snakes"][snake_index]["head"]["x"],
+                  game_state["board"]["snakes"][snake_index]["head"]["y"])
+    snake_new_head = update_head_coord(snake_head[0], snake_head[1], move)
+
+
+
+
+    return new_game_state
+
 
 
 def minimax_run(game_state, depth, evaluating_snake_id, our_snake_id, previous_snake_id, alpha, beta, current_turn):
