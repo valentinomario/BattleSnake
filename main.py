@@ -128,6 +128,7 @@ def move (game_state: typing.Dict) -> typing.Dict:
     processedBoard = defineBoard(game_state)
     safe_moves = safeMove(game_state, processedBoard)
     selected_move = miniMax_value(game_state, safe_moves)
+    print("game state" + str(game_state))
     return {"move": selected_move}
 
 
