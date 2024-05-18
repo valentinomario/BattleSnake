@@ -131,7 +131,7 @@ def move(game_state: typing.Dict) -> typing.Dict:
         processedBoard = defineBoard(game_state)
         safe_moves = safeMove(game_state, processedBoard)
         selected_move = miniMax_value(game_state, safe_moves, current_time_ms)
-        if selected_move is None:
+        if selected_move is None or selected_move not in safe_moves:
             raise Exception("Minimax failed!")
         return {"move": selected_move}
     except Exception as err:
