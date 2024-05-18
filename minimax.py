@@ -664,12 +664,12 @@ def evaluatePoint(game_state, depth, main_snake_id, curr_snake_id, current_turn)
     curr_weight = 0
 
     opponent_death_weight = float("inf")
-    available_space_weight = 0.5
-    outer_bound_weight = -12
-    center_control_weight = 5
-    head_kill_weight = 50
+    available_space_weight = 10
+    outer_bound_weight = -5 # risk of being trapped
+    # center_control_weight = 5
+    head_kill_weight = 70
     food_weight = 25
-    snake_size_weight = 15
+    snake_size_weight = 20
     more_turn_weight = 20
 
 
@@ -705,10 +705,10 @@ def evaluatePoint(game_state, depth, main_snake_id, curr_snake_id, current_turn)
     elif (curr_snake_health < 35):
         curr_weight += low_health_penalty
 
-    if (len(game_state["snakes"]) > 2):
-        center_control_weight = 0
+    # if (len(game_state["snakes"]) > 2):
+    #     center_control_weight = 0
 
-    # Add weight the bigger the snake is, currently + 15 for each growth
+    # Add weight the bigger the snake is
     curr_weight += curr_snake_size * snake_size_weight
 
     # FloodFill determines available space for current snake to move, add space weight
@@ -746,8 +746,8 @@ def evaluatePoint(game_state, depth, main_snake_id, curr_snake_id, current_turn)
         curr_weight += outer_bound_weight
 
     # Add weight if snake is in center of board
-    if (head_x in [4, 5, 6] and len(game_state["snakes"]) < 3):
-        curr_weight += center_control_weight
+    # if (head_x in [4, 5, 6] and len(game_state["snakes"]) < 3):
+        # curr_weight += center_control_weight
 
     smallest_snake_distance, head_collision_value = headCollisionInfo(
         game_state, head_x, head_y, curr_snake_size, curr_snake_id, main_snake_id)

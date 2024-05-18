@@ -126,6 +126,11 @@ def search_closest_safest_food(game_state: typing.Dict):
 
 def move(game_state: typing.Dict) -> typing.Dict:
     printly(game_state, "Move: " + str(game_state["turn"]))
+    # always try to kill in one move 
+    ikm = immediate_kill_move(game_state)
+    if ikm is not None:
+        printly(game_state, "killing in one move: " + ikm)
+        return {"move": ikm}
     try:
         current_time_ms = int(time.time() * 1000)
         processedBoard = defineBoard(game_state)
